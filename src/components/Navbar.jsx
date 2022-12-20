@@ -6,16 +6,9 @@ function Navbar() {
       <div className="navLink">
         <span>Coin</span>
         <span>Exchange</span>
-        <span>Swap</span>
       </div>
-      <h2>Crypto Market</h2>
-      <div>
-        <input className="search" type="search" placeholder="Search" />
-        <select className="select" name="language" id="">
-          <option>English</option>
-          <option>Hindi</option>
-          <option>Spanish</option>
-        </select>
+      <h4>Crypto Market</h4>
+      <div className="nav">
         <button className="btn">Connect wallet</button>
       </div>
     </div>

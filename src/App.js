@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { FaRegStar } from "react-icons/fa";
 import Navbar from "./components/Navbar";
-
 function App() {
   const [coinList, setCoinList] = useState([]);
   const [filterList, setFilterList] = useState([]);
-  const [sortKey, setSortKey] = useState("");
+  const [sortKey, setSortKey] = useState("rank");
   const [favorite, setFavorite] = useState([]);
   const [displayCol, setDisplayCol] = useState("priceChange1h");
   const [limit, setLimit] = useState(20);
@@ -20,52 +19,42 @@ function App() {
   const fetchData = async () => {
     const response = await fetch("https://api.coinstats.app/public/v1/coins");
     const data = await response.json();
-    if (sortKey !== "") {
-      sortData(data.coins);
-    } else {
-      setFilterList(data.coins);
-    }
-  };
-
-  useEffect(() => {
-    const getData = setInterval(() => fetchData(), 3000);
-    const list = [...filterList];
-    setCoinList([...list.splice(0, limit)]);
-
-    return () => clearInterval(getData);
-    // eslint-disable-next-line
-  }, [filterList]);
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line
-  }, [sortKey]);
-
-  const handleChange = () => {
-    setLimit((prev) => prev + 20);
+    sortData(data.coins);
   };
 
   const sortData = (data) => {
     const newList = [...data];
     if (filterKey[sortKey]) {
       newList.sort((a, b) => {
-        return a[sortKey] - b[sortKey];
+        return b[sortKey] - a[sortKey];
       });
     } else {
       newList.sort((a, b) => {
-        return b[sortKey] - a[sortKey];
+        return a[sortKey] - b[sortKey];
       });
     }
     setFilterList(newList);
   };
 
-  const formatNumber = (n) => {
-    if (n < 1e3) return n;
-    if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(2) + "K";
-    if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(2) + "M";
-    if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(2) + "B";
-    if (n >= 1e12) return +(n / 1e12).toFixed(2) + "T";
+  useEffect(() => {
+    const getData = setInterval(() => fetchData(), 500);
+    const list = [...filterList];
+    setCoinList([...list.splice(0, limit)]);
+    return () => clearInterval(getData);
+    // eslint-disable-next-line
+  }, [filterList]);
+
+  const handleSort = (k) => {
+    setSortKey(k);
+    const sorted = {
+      rank: false,
+      price: false,
+      marketCap: false,
+      priceChange1d: false,
+    };
+    setFilterKey({ ...sorted, [k]: !filterKey[k] });
   };
+
   const addToFavorite = (id) => {
     const list = [...favorite];
     if (favorite.some((item) => item.id === id)) {
@@ -82,16 +71,16 @@ function App() {
     setFavorite(list);
   };
 
-  const handleSort = (k) => {
-    setSortKey(k);
-    const sorted = {
-      rank: false,
-      price: false,
-      marketCap: false,
-      priceChange1d: false,
-    };
-    setFilterKey({ ...sorted, [k]: !filterKey[k] });
-    // fetchData();
+  const formatNumber = (n) => {
+    if (n < 1e3) return n;
+    if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(2) + "K";
+    if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(2) + "M";
+    if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(2) + "B";
+    if (n >= 1e12) return +(n / 1e12).toFixed(2) + "T";
+  };
+
+  const handleChange = () => {
+    setLimit((prev) => prev + 20);
   };
 
   return (
@@ -133,7 +122,6 @@ function App() {
               </th>
             </tr>
           </thead>
-
           {coinList && (
             <tbody className="tableBody">
               {coinList.map((coin) => {
@@ -169,7 +157,7 @@ function App() {
                     <td
                       style={{ color: coin[displayCol] > 0 ? "green" : "red" }}
                     >
-                      {formatNumber(coin[displayCol])}%
+                      {coin[displayCol]}%
                     </td>
                   </tr>
                 );
@@ -184,5 +172,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

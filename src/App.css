@@ -33,18 +33,16 @@
     gap: 25px;
 }
 
-.search {
-    margin: 5px;
-    padding: 5px;
-    border: none;
+.nav {
+    display: flex;
 }
 
 .container {
     width: 100%;
-    height: 90vh;
+    height: auto;
     padding: 10px;
     margin-top: 50px;
-    background: rgb(135, 78, 78);
+    background: rgb(6 99 213);
 }
 
 .table {
@@ -93,15 +91,17 @@
 }
 
 .coinName div {
+    width: 5rem;
     margin-left: 3px;
     padding: 3px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .btn {
-    margin: 20px;
+    margin: 15px;
     padding: 10px 15px;
     font-weight: bold;
     color: white;
@@ -112,4 +112,10 @@
 
 .star {
     border-radius: 50%;
+}
+
+@media screen and (max-width: 630px) {
+    .container {
+        overflow-x: scroll;
+    }
 }
