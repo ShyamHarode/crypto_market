@@ -118,4 +118,8 @@
     .container {
         overflow-x: scroll;
     }
+    .navLink {
+        margin: 0, 5px;
+        gap: 15px;
+    }
 }
