@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { FaRegStar } from "react-icons/fa";
 import Navbar from "./components/Navbar";
-function App() {
+
+function App1() {
   const [coinList, setCoinList] = useState([]);
-  const [filterList, setFilterList] = useState([]);
   const [sortKey, setSortKey] = useState("rank");
   const [favorite, setFavorite] = useState([]);
   const [displayCol, setDisplayCol] = useState("priceChange1h");
@@ -16,10 +16,12 @@ function App() {
     priceChange1d: false,
   });
 
+  let data;
   const fetchData = async () => {
     const response = await fetch("https://api.coinstats.app/public/v1/coins");
-    const data = await response.json();
-    sortData(data.coins);
+    const newData = await response.json();
+    data = newData.coins;
+    sortData(data);
   };
 
   const sortData = (data) => {
@@ -33,16 +35,21 @@ function App() {
         return a[sortKey] - b[sortKey];
       });
     }
-    setFilterList(newList);
+    setCoinList(newList.splice(0, limit));
   };
 
   useEffect(() => {
-    const getData = setInterval(() => fetchData(), 500);
-    const list = [...filterList];
-    setCoinList([...list.splice(0, limit)]);
+    fetchData();
+    const getData = setInterval(() => fetchData(), 1000);
     return () => clearInterval(getData);
     // eslint-disable-next-line
-  }, [filterList]);
+  }, [filterKey, limit]);
+
+  useEffect(() => {
+    const favData = JSON.parse(localStorage.getItem("FavList"));
+    if (favData) setFavorite(favData);
+    // eslint-disable-next-line
+  }, []);
 
   const handleSort = (k) => {
     setSortKey(k);
@@ -60,6 +67,10 @@ function App() {
     if (favorite.some((item) => item.id === id)) {
       const newList = list.filter((obj) => obj.id !== id);
       setFavorite(newList);
+
+      const list1 = JSON.stringify(newList);
+      localStorage.setItem("FavList", list1);
+
       return;
     }
     const coin = coinList.find((obj) => obj.id === id);
@@ -69,6 +80,9 @@ function App() {
       alert("You can not add more than 3 Coin");
     }
     setFavorite(list);
+
+    const list1 = JSON.stringify(list);
+    localStorage.setItem("FavList", list1);
   };
 
   const formatNumber = (n) => {
@@ -87,6 +101,56 @@ function App() {
     <div className="App">
       <Navbar />
       <main className="container">
+        <div>
+          {favorite && (
+            <table className="table">
+              <thead className="tableHead">
+                <tr>
+                  <th>Favorite</th>
+                  <th className="pointer">Rank</th>
+                  <th style={{ textAlign: "start", paddingLeft: "10px" }}>
+                    Name
+                  </th>
+                  <th className="pointer" onClick={() => handleSort("price")}>
+                    Price
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="tableBody">
+                {favorite?.map((coin) => {
+                  return (
+                    <tr key={coin.id} className="tableRow">
+                      <td>
+                        <FaRegStar
+                          className="pointer star"
+                          onClick={() => addToFavorite(coin.id)}
+                          style={{
+                            backgroundColor: favorite.some(
+                              (c) => c.id === coin.id
+                            )
+                              ? "yellow"
+                              : "",
+                          }}
+                        />
+                      </td>
+                      <td>{coin.rank}</td>
+                      <td className="coinName">
+                        <img className="icon" src={coin.icon} alt="icon" />
+                        <div>
+                          <span>{coin.name}</span>
+                          <span style={{ color: "gray", fontSize: "smaller" }}>
+                            {coin.symbol}
+                          </span>
+                        </div>
+                      </td>
+                      <td>${coin.price.toFixed(2)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
         <table className="table">
           <thead className="tableHead">
             <tr>
@@ -172,4 +236,4 @@ function App() {
     </div>
   );
 }
-export default App;
+export default App1;
