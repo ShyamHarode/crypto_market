@@ -102,7 +102,7 @@ function App1() {
       <Navbar />
       <main className="container">
         <div>
-          {favorite && (
+          {favorite.length > 0 && (
             <table className="table">
               <thead className="tableHead">
                 <tr>
