@@ -3,7 +3,8 @@ import "./App.css";
 import { FaRegStar } from "react-icons/fa";
 import Navbar from "./components/Navbar";
 
-function App1() {
+function App() {
+  const [data, setData] = useState([]);
   const [coinList, setCoinList] = useState([]);
   const [sortKey, setSortKey] = useState("rank");
   const [favorite, setFavorite] = useState([]);
@@ -16,12 +17,13 @@ function App1() {
     priceChange1d: false,
   });
 
-  let data;
   const fetchData = async () => {
     const response = await fetch("https://api.coinstats.app/public/v1/coins");
     const newData = await response.json();
-    data = newData.coins;
-    sortData(data);
+    const allData = newData.coins;
+    setData(allData);
+    sortData(allData);
+    // console.log(data.length);
   };
 
   const sortData = (data) => {
@@ -40,7 +42,7 @@ function App1() {
 
   useEffect(() => {
     fetchData();
-    const getData = setInterval(() => fetchData(), 1000);
+    const getData = setInterval(() => fetchData(), 2000);
     return () => clearInterval(getData);
     // eslint-disable-next-line
   }, [filterKey, limit]);
@@ -229,11 +231,13 @@ function App1() {
             </tbody>
           )}
         </table>
-        <button className="btn" onClick={() => handleChange()}>
-          View More
-        </button>
+        {data.length / limit > 1 && (
+          <button className="btn" onClick={() => handleChange()}>
+            View More
+          </button>
+        )}
       </main>
     </div>
   );
 }
-export default App1;
+export default App;
