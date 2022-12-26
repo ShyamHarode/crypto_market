@@ -9,7 +9,7 @@ function Navbar() {
       </div>
       <h4>Crypto Market</h4>
       <div className="nav">
-        <button className="btn">Connect wallet</button>
+        <button className="btn pointer">Connect wallet</button>
       </div>
     </div>
   );

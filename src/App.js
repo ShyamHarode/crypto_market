@@ -232,7 +232,7 @@ function App() {
           )}
         </table>
         {data.length / limit > 1 && (
-          <button className="btn" onClick={() => handleChange()}>
+          <button className="btn pointer" onClick={() => handleChange()}>
             View More
           </button>
         )}
